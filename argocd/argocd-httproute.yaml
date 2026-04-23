@@ -1,0 +1,21 @@
+# argocd-httproute.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argocd-httproute
+  namespace: nginx-gateway
+spec:
+  parentRefs:
+  - name: cluster-gateway
+    namespace: nginx-gateway
+  hostnames:
+  - "argocd.local"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: argocd-server
+      namespace: argocd
+      port: 80
