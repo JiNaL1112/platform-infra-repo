@@ -6,12 +6,9 @@ global:
   domain: argocd.local
 
 server:
-  # Disable TLS on ArgoCD server
-  # TLS is handled by nginx-gateway
   extraArgs:
     - --insecure
 
-  # Use ClusterIP - external access via HTTPRoute
   service:
     type: ClusterIP
     servicePortHttp: 80
@@ -19,11 +16,25 @@ server:
     servicePortHttpName: http
     servicePortHttpsName: https
 
-  # Ingress disabled - using Gateway API HTTPRoute instead
   ingress:
     enabled: false
 
 configs:
   params:
-    # Required when running behind a reverse proxy
     server.insecure: true
+
+  cm:
+    # Admin account with apiKey + login
+    accounts.admin: apiKey, login
+
+    # Dedicated CI/CD service account
+    accounts.cicd: apiKey
+
+  rbac:
+    policy.default: role:readonly
+    policy.csv: |
+      p, role:cicd, applications, *, */*, allow
+      p, role:cicd, clusters, get, *, allow
+      p, role:cicd, repositories, get, *, allow
+      p, role:cicd, projects, get, *, allow
+      g, cicd, role:cicd
