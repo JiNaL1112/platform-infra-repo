@@ -5,24 +5,16 @@ metadata:
   namespace: nginx-gateway
 spec:
   gatewayClassName: nginx
-  infrastructure:
-    parametersRef:
-      group: gateway.nginx.org
-      kind: NginxProxy
-      name: nginx-proxy-config
   listeners:
   - name: http
     port: 80
     protocol: HTTP
-    allowedRoutes:
-      namespaces:
-        from: All
-  - name: grpc
-    port: 80
-    protocol: HTTP
+    hostname: "argocd.local"
     allowedRoutes:
       namespaces:
         from: All
       kinds:
+      - group: gateway.networking.k8s.io
+        kind: HTTPRoute
       - group: gateway.networking.k8s.io
         kind: GRPCRoute

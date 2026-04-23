@@ -11,7 +11,7 @@ server:
 
   service:
     type: ClusterIP
-    servicePortHttp: 80
+    servicePortHttp: 8080
     servicePortHttps: 443
     servicePortHttpName: http
     servicePortHttpsName: https

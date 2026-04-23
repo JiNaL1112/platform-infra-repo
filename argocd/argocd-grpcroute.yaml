@@ -10,8 +10,12 @@ spec:
   hostnames:
   - "argocd.local"
   rules:
-  - backendRefs:
+  - matches:
+    - method:
+        service: cluster.ClusterService  # gRPC service match
+    backendRefs:
     - name: argocd-server
       namespace: argocd
-      port: 80
+      port: 8080
       weight: 1
+  

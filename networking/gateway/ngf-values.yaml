@@ -1,0 +1,13 @@
+# ============================================
+# NGINX Gateway Fabric Helm Values
+# Version: 2.5.1
+# ============================================
+ 
+nginxGateway:
+  # Enable experimental Gateway API features (required for GRPCRoute)
+  gwAPIExperimentalFeatures:
+    enable: true
+ 
+nginx:
+  service:
+    type: LoadBalancer

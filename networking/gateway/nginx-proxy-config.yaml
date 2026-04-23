@@ -1,7 +1,7 @@
-apiVersion: gateway.nginx.org/v1alpha1
+apiVersion: gateway.nginx.org/v1alpha2   # was v1alpha1
 kind: NginxProxy
 metadata:
   name: nginx-proxy-config
   namespace: nginx-gateway
 spec:
-  http2: true
+  disableHTTP2: false   # was "http2: true" — this field doesn't exist
