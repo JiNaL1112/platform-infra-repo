@@ -1,0 +1,143 @@
+# ================================================================
+# Grafana config
+# ================================================================
+grafana:
+  enabled: true
+  adminPassword: "admin123"         # change this to something strong
+
+  # Persistent storage so dashboards survive restarts
+  persistence:
+    enabled: true
+    size: 2Gi
+
+  # Resource limits tuned for minikube
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # Default dashboards to auto-load
+  defaultDashboardsEnabled: true
+  defaultDashboardsTimezone: "browser"
+
+  # Grafana.ini settings
+  grafana.ini:
+    server:
+      root_url: "http://grafana.local"   # matches your HTTPRoute hostname
+    security:
+      allow_embedding: true
+    auth.anonymous:
+      enabled: false
+
+# ================================================================
+# Prometheus config
+# ================================================================
+prometheus:
+  enabled: true
+
+  prometheusSpec:
+    # How long to keep metrics data
+    retention: 7d
+
+    # Persistent storage for metrics
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+    # Resource limits
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+
+    # Scrape interval
+    scrapeInterval: "30s"
+    evaluationInterval: "30s"
+
+    # Allow Prometheus to scrape all namespaces
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+
+# ================================================================
+# Alertmanager config
+# ================================================================
+alertmanager:
+  enabled: true
+
+  alertmanagerSpec:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi
+
+# ================================================================
+# Node exporter — collects host metrics
+# ================================================================
+prometheus-node-exporter:
+  enabled: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# ================================================================
+# Kube state metrics — collects k8s object metrics
+# ================================================================
+kube-state-metrics:
+  enabled: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# ================================================================
+# Built-in component monitoring (safe to keep all true)
+# ================================================================
+kubeApiServer:
+  enabled: true
+
+kubeControllerManager:
+  enabled: false    # not accessible in minikube
+
+kubeScheduler:
+  enabled: false    # not accessible in minikube
+
+kubeProxy:
+  enabled: false    # not accessible in minikube
+
+kubeEtcd:
+  enabled: false    # not accessible in minikube
+
+kubelet:
+  enabled: true
+
+coreDns:
+  enabled: true

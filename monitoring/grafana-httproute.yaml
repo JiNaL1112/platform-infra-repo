@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: grafana-httproute
+  namespace: nginx-gateway   
+spec:       
+  parentRefs:
+    - name: cluster-gateway          
+      namespace: nginx-gateway
+      sectionName: http-grafana 
+  hostnames:
+    - "grafana.local"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: kube-prom-stack-grafana
+          namespace: monitoring
+          port: 80
