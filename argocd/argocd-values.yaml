@@ -45,9 +45,8 @@ configs:
 # ============================================
 notifications:
   enabled: true          # starts the notifications controller pod
-
   cm:
-    create: true         # creates argocd-notifications-cm ConfigMap
-
+    create: false       # do not create ConfigMap, we will apply our own with templates and triggers
   secret:
     create: true         # creates argocd-notifications-secret (for tokens/passwords)
+

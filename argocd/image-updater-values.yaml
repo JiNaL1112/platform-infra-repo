@@ -1,0 +1,84 @@
+# ============================================
+# ArgoCD Image Updater Helm Values
+# Chart: argo/argocd-image-updater
+# Install: helm install argocd-image-updater argo/argocd-image-updater -n argocd -f image-updater-values.yaml
+# Upgrade: helm upgrade argocd-image-updater argo/argocd-image-updater -n argocd -f image-updater-values.yaml
+# ============================================
+
+# --------------------------------------------
+# ArgoCD Connection
+# --------------------------------------------
+config:
+  # ArgoCD server address (internal cluster DNS)
+  argocd:
+    serverAddress: http://argocd-server.argocd.svc.cluster.local
+    insecure: true          # set to false if ArgoCD has TLS enabled
+    plaintext: true         # must match insecure setting
+
+  # Log level: trace | debug | info | warn | error
+  logLevel: info
+
+  # How often image updater checks registries for new tags (default: 2m)
+  checkInterval: 2m
+
+  # --------------------------------------------
+  # Registry Configuration
+  # Docker Hub (public) - no credentials needed
+  # --------------------------------------------
+  registries: []
+  # For private registries, uncomment and fill:
+  # registries:
+  #   - name: Docker Hub Private
+  #     prefix: docker.io
+  #     api_url: https://registry-1.docker.io
+  #     credentials: secret:argocd/registry-secret#credentials
+  #     defaultns: library
+  #     default: true
+
+# --------------------------------------------
+# Git Write-back (GitOps)
+# Image Updater commits tag changes back to Git
+# --------------------------------------------
+# To enable, add these annotations to your ArgoCD Application:
+#   argocd-image-updater.argoproj.io/write-back-method: git
+#   argocd-image-updater.argoproj.io/git-credentials: argocd/git-creds
+#
+# And create the git-creds secret:
+#   kubectl create secret generic git-creds -n argocd \
+#     --from-literal=username=<github-username> \
+#     --from-literal=password=<github-pat-token>
+
+# --------------------------------------------
+# Metrics & Monitoring
+# --------------------------------------------
+metrics:
+  enabled: true             # exposes /metrics endpoint
+  port: 8081
+
+# --------------------------------------------
+# Resources
+# --------------------------------------------
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+# --------------------------------------------
+# RBAC - ServiceAccount
+# --------------------------------------------
+serviceAccount:
+  create: true
+  name: argocd-image-updater
+
+# --------------------------------------------
+# Application Annotations Reference
+# Add these to your nginx_app.yaml Application resource
+# --------------------------------------------
+# argocd-image-updater.argoproj.io/image-list: nginx-frontend=nginx
+# argocd-image-updater.argoproj.io/nginx-frontend.update-strategy: semver
+# argocd-image-updater.argoproj.io/nginx-frontend.allow-tags: regexp:^[0-9]+\.[0-9]+\.[0-9]+$
+# argocd-image-updater.argoproj.io/write-back-method: git
+# argocd-image-updater.argoproj.io/git-credentials: argocd/git-creds

@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GRPCRoute
+metadata:
+  name: argocd-grpcroute
+  namespace: nginx-gateway
+spec:
+  parentRefs:
+  - name: cluster-gateway
+    namespace: nginx-gateway
+  hostnames:
+  - "argocd.local"
+  rules:
+  - matches:
+    - method:
+        service: cluster.ClusterService  # gRPC service match
+    backendRefs:
+    - name: argocd-server
+      namespace: argocd
+      port: 8080
+      weight: 1
+  
