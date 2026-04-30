@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: demo-cluster
+  namespace: argocd
+spec:
+  # Cluster generator will iterate over clusters registered in ArgoCD (via `argocd cluster add`)
+  generators:
+    - clusters: {}   # empty object => include all registered clusters (you can filter with labelSelectors)
+  template:
+    metadata:
+      # Use the cluster name ({{name}}) to create unique app names per cluster
+      name: '{{name}}-chai-app'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/<your-username>/argocd-demos.git
+        targetRevision: main
+        path: applicationsets/chai-app    # same app deployed to all clusters
+      destination:
+        # destination.server will be filled with '{{server}}' for each cluster entry generated
+        server: '{{server}}'
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+
+# Notes:
+# - After applying this ApplicationSet ArgoCD will create one Application per cluster it knows about.
+# - If you want to limit to specific clusters, use the clusters generator with labelSelectors, or use a List generator instead.

@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: demo-git
+  namespace: argocd
+spec:
+  # Git generator scans the repo and generates an Application for each matching directory
+  generators:
+    - git:
+        repoURL: https://github.com/<your-username>/argocd-demos.git
+        revision: main
+        # 'directories' accepts globs; each matched path becomes an entry
+        directories:
+          - path: "git_generator/*"     # will match git_generator/apache, git_generator/online-shop and git_generator/chai-app folders.
+  template:
+    metadata:
+      # path.basename is the final folder name (e.g., 'nginx' or 'apache')
+      name: '{{path.basename}}-git'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/<your-username>/argocd-demos.git
+        targetRevision: main
+        path: '{{path}}'            # 'path' is the full matched path (e.g., 'git_generator/apache')
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+
+# Notes:
+# - This is ideal for monorepos or where each app lives in its own folder.
+# - Ensure the repo is reachable by ArgoCD (public or added via argocd repo add).

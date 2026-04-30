@@ -1,0 +1,12 @@
+# ============================================
+# 🔐 PLAIN SECRETS - NEVER COMMIT THESE
+# ============================================
+
+# Plain Kubernetes secret files
+secret-*.yaml
+*-secret.yaml
+secrets.yaml
+secret.yaml
+
+# Specific secret files
+secret-smtp.yaml

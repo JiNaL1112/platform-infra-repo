@@ -4,6 +4,17 @@
 grafana:
   enabled: true
   adminPassword: "admin123"         # change this to something strong
+  
+  # This disables the init-chown-data container that's crashing
+  initChownData: 
+    enabled: false
+
+  
+  # Fix 1: fsGroup lets Kubernetes chown the PVC to the grafana user on mount
+  securityContext:
+    runAsUser: 472
+    runAsGroup: 472
+    fsGroup: 472
 
   # Persistent storage so dashboards survive restarts
   persistence:
@@ -31,6 +42,17 @@ grafana:
       allow_embedding: true
     auth.anonymous:
       enabled: false
+
+  # Fix 2: explicitly point datasource at the correct named service
+  additionalDataSources:
+    - name: Prometheus
+      type: prometheus
+      uid: prometheus
+      url: http://kube-prom-stack-kube-prome-prometheus.monitoring.svc.cluster.local:9090
+      access: proxy
+      isDefault: false
+      jsonData:
+        timeInterval: 30s
 
 # ================================================================
 # Prometheus config

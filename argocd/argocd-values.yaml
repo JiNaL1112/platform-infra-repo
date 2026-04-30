@@ -38,3 +38,16 @@ configs:
       p, role:cicd, repositories, get, *, allow
       p, role:cicd, projects, get, *, allow
       g, cicd, role:cicd
+
+
+# ============================================
+# ADD THIS BLOCK — Notifications
+# ============================================
+notifications:
+  enabled: true          # starts the notifications controller pod
+
+  cm:
+    create: true         # creates argocd-notifications-cm ConfigMap
+
+  secret:
+    create: true         # creates argocd-notifications-secret (for tokens/passwords)
