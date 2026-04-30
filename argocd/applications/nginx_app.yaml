@@ -3,6 +3,12 @@ kind: Application               # Kind of resource
 metadata:                        # Metadata section                         
   name: nginx-frontend          # App name
   namespace: argocd             # Must exist in ArgoCD namespace
+  annotations:
+    # The email notifier must be configured in argocd-notifications-cm.yaml, The `.email` is the name of the notifier, i.e, `service.email` in the argocd-notifications-cm.yaml.
+    # Subscribe to notifications when the app health is degraded.
+    notifications.argoproj.io/subscribe.on-health-degraded.email: "jinalpatel11121999@gmail.com"  # you can add multiple email ids separated by comma like "<receiver@example.com>, <receiver2@example.com>"
+    # Subscribe to notifications when the app is successfully deployed.
+    notifications.argoproj.io/subscribe.on-deployed.email: "jinalpatel11121999@gmail.com" # you can add multiple email ids separated by comma like "<receiver@example.com>, <receiver2@example.com>"
 spec:
   project: frontend-team        # Assigns app to the frontend-team Project
   source:

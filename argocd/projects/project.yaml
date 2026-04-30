@@ -13,9 +13,13 @@ spec:
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
-  namespaceResourceBlacklist:
-    - group: '*'
-      kind: '*'
+  namespaceResourceWhitelist:
+    - group: 'apps'
+      kind: 'Deployment'
+    - group: ''
+      kind: 'Service'
+    - group: ''
+      kind: 'ConfigMap'
   roles:
     - name: frontend-admin
       description: Admin role for frontend project
