@@ -1,5 +1,7 @@
 # ============================================
 # ArgoCD Helm Values
+
+# helm upgrade argocd argo/argo-cd -n argocd -f argocd-values.yaml
 # ============================================
 
 global:
@@ -18,6 +20,24 @@ server:
 
   ingress:
     enabled: false
+
+  #  enables argocd-server-metrics service (port 8083)
+  metrics:
+    enabled: true
+    service:
+      type: ClusterIP
+      servicePort: 8083
+      portName: http-metrics
+
+#  enables argocd-metrics service (port 8082)
+controller:
+  metrics:
+    enabled: true
+    service:
+      type: ClusterIP
+      servicePort: 8082
+      portName: http-metrics
+
 
 configs:
   params:
@@ -48,5 +68,14 @@ notifications:
   cm:
     create: false       # do not create ConfigMap, we will apply our own with templates and triggers
   secret:
-    create: true         # creates argocd-notifications-secret (for tokens/passwords)
+    create: true   
+    
+
+
+
+repoServer:
+  metrics:
+    enabled: true
+    service:
+      servicePort: 8084     # creates argocd-notifications-secret (for tokens/passwords)
 

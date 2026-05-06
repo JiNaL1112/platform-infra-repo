@@ -1,0 +1,41 @@
+
+# ================================================================
+# helm install gatekeeper gatekeeper/gatekeeper --namespace gatekeeper-system --create-namespace --values values.yaml
+
+# helm upgrade gatekeeper gatekeeper/gatekeeper --namespace gatekeeper-system --values values.yaml
+# 
+# ================================================================
+
+# Replicas - single for minikube
+replicas: 1
+
+# Resources - reduced for minikube
+controllerManager:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  affinity: {}
+
+audit:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+# Disable heavy features for minikube
+podDisruptionBudget:
+  enabled: false
+
+priorityClassName: ""
+
+# Skip post-install job (fixes timeout issue)
+postInstall:
+  labelNamespace:
+    enabled: false
