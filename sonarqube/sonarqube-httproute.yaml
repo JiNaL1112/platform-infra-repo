@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sonarqube-httproute
+  namespace: nginx-gateway
+spec:
+  parentRefs:
+    - name: cluster-gateway
+      namespace: nginx-gateway
+      sectionName: http-sonarqube
+  hostnames:
+    - "sonarqube.local"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: sonarqube-sonarqube          # verify actual svc name, see note below
+          namespace: sonarqube
+          port: 9000

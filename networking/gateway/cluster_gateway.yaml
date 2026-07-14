@@ -18,6 +18,7 @@ spec:
         kind: HTTPRoute
       - group: gateway.networking.k8s.io
         kind: GRPCRoute
+        
   - name: http-fraud          
     hostname: fraud-detection.local
     port: 80
@@ -25,6 +26,7 @@ spec:
     allowedRoutes:
       namespaces:
         from: All
+
   - name: http-grafana              
     port: 80
     protocol: HTTP
@@ -37,6 +39,14 @@ spec:
     port: 80
     protocol: HTTP
     hostname: "prometheus.local"
+    allowedRoutes:
+      namespaces:
+        from: All
+
+  - name: http-sonarqube
+    port: 80
+    protocol: HTTP
+    hostname: "sonarqube.local"
     allowedRoutes:
       namespaces:
         from: All
