@@ -9,3 +9,6 @@ helm install gatekeeper gatekeeper/gatekeeper \
   --namespace gatekeeper-system \
   --create-namespace \
   --values values.yaml
+
+
+helm install gatekeeper gatekeeper/gatekeeper --namespace gatekeeper-system --create-namespace --values values.yaml

@@ -1,0 +1,37 @@
+# values-sonarqube-community.yaml
+# SonarQube Server — Community Build install via official Helm chart
+# helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
+# helm upgrade --install sonarqube sonarqube/sonarqube -n sonarqube -f values-sonarqube-community.yaml
+
+community:
+  enabled: true
+
+# --- Database ---
+postgresql:
+  enabled: true
+  postgresqlUsername: sonarUser
+  postgresqlPassword: "changeMe"
+  postgresqlDatabase: sonarqube
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: standard
+
+# --- Resources ---
+resources:
+  requests:
+    memory: "2Gi"
+    cpu: "1"
+  limits:
+    memory: "4Gi"
+    cpu: "2"
+
+# --- Persistence for SonarQube's own data/index volume ---
+persistence:
+  enabled: true
+  storageClass: standard
+  size: 20Gi
+
+# --- Monitoring passcode ---
+# Option A: plain string directly in values (fine for local/dev testing)
+monitoringPasscode: "changeMePasscode"

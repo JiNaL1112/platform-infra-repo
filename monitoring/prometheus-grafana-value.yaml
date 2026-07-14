@@ -1,5 +1,7 @@
 # ================================================================
 # Grafana config
+
+# helm install kube-prom-stack prometheus-community/kube-prometheus-stack -f monitoring-values.yaml -n monitoring
 # ================================================================
 grafana:
   enabled: true

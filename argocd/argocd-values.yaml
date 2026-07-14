@@ -2,6 +2,9 @@
 # ArgoCD Helm Values
 
 # helm upgrade argocd argo/argo-cd -n argocd -f argocd-values.yaml
+
+# 
+# helm install argocd argo/argo-cd -n argocd -f argocd-values.yaml
 # ============================================
 
 global:
@@ -50,6 +53,10 @@ configs:
     # Dedicated CI/CD service account
     accounts.cicd: apiKey
 
+    # Add these new users
+    accounts.alice: apiKey, login   # UI login + token generation
+    accounts.bob: login             # UI login only
+
   rbac:
     policy.default: role:readonly
     policy.csv: |
@@ -58,6 +65,11 @@ configs:
       p, role:cicd, repositories, get, *, allow
       p, role:cicd, projects, get, *, allow
       g, cicd, role:cicd
+
+                           
+      g, alice, role:admin   // Alice has admin privileges
+      g, bob, role:readonly  // Bob has read-only access                   
+      
 
 
 # ============================================

@@ -1,6 +1,8 @@
 # ============================================
 # NGINX Gateway Fabric Helm Values
 # Version: 2.5.1
+
+# helm install ngf oci://ghcr.io/nginx/charts/nginx-gateway-fabric --version 2.5.1  -f networking/gateway/ngf-values.yaml  -n nginx-gateway  --create-namespace
 # ============================================
  
 nginxGateway:
