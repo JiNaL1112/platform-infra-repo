@@ -1,0 +1,7 @@
+tunnel: sonarqube-tunnel
+credentials-file: C:\Users\jinal\.cloudflared\5c3de483-425a-4a7b-898f-c98ed46536ce.json
+
+ingress:
+  - hostname: sonarqube.jinalpatel.dev
+    service: http://sonarqube.local:80
+  - service: http_status:404

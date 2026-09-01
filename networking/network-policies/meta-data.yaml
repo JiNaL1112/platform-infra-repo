@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-metadata
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: app
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 10.0.0.191/32 # Replace with the actual IP address of the controlplane node
