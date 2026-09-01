@@ -15,7 +15,9 @@ postgresql:
   persistence:
     enabled: true
     size: 10Gi
-    storageClass: standard
+    storageClass: local-path
+
+
 
 # --- Resources ---
 resources:
@@ -29,7 +31,7 @@ resources:
 # --- Persistence for SonarQube's own data/index volume ---
 persistence:
   enabled: true
-  storageClass: standard
+  storageClass: local-path
   size: 20Gi
 
 # --- Monitoring passcode ---
