@@ -1,0 +1,29 @@
+# ============================================
+# MetalLB Helm Values
+# Chart: metallb/metallb
+# Install: helm install metallb metallb/metallb -n metallb-system --create-namespace -f metallb-values.yaml
+# Upgrade: helm upgrade metallb metallb/metallb -n metallb-system -f metallb-values.yaml
+# ============================================
+
+# Resource limits — tuned down for a small on-prem cluster (2 nodes)
+controller:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+speaker:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# Note: IPAddressPool and L2Advertisement are separate CRDs (not Helm values).
+# They must be applied AFTER this chart installs, via a plain manifest —
+# see metallb-ipaddresspool.yaml.

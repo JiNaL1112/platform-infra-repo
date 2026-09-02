@@ -39,3 +39,7 @@ priorityClassName: ""
 postInstall:
   labelNamespace:
     enabled: false
+
+nginx:
+  service:
+    type: LoadBalancer
