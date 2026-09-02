@@ -57,6 +57,22 @@ grafana:
       jsonData:
         timeInterval: 30s
 
+  livenessProbe:
+    httpGet:
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 300
+    timeoutSeconds: 30
+    failureThreshold: 10
+
+  readinessProbe:
+    httpGet:
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 60
+    timeoutSeconds: 10
+    failureThreshold: 10
+
 # ================================================================
 # Prometheus config
 # ================================================================
