@@ -10,3 +10,9 @@ secret.yaml
 
 # Specific secret files
 secret-smtp.yaml
+
+
+# ============================================
+# 🔐 SENSITIVE CONFIGS - NEVER COMMIT THESE
+# ============================================
+key-vault.md
