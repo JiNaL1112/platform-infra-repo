@@ -50,3 +50,11 @@ spec:
     allowedRoutes:
       namespaces:
         from: All
+
+  - name: http-bankapp
+    port: 80
+    protocol: HTTP
+    hostname: "bankapp.local"
+    allowedRoutes:
+      namespaces:
+        from: All
