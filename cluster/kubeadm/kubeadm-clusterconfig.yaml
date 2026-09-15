@@ -8,6 +8,12 @@ apiServer:
       value: "/var/log/kubernetes/audit/audit.log"
     - name: audit-policy-file
       value: "/etc/kubernetes/audit/audit-policy.yaml"
+    - name: audit-log-maxage
+      value: "30"
+    - name: audit-log-maxbackup
+      value: "10"
+    - name: audit-log-maxsize
+      value: "100"
   extraVolumes:
     - name: audit-policy
       hostPath: /etc/kubernetes/audit
