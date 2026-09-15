@@ -30,7 +30,10 @@ caCertificateValidityPeriod: 87600h0m0s
 certificateValidityPeriod: 8760h0m0s
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
-controllerManager: {}
+controllerManager:
+  extraArgs:
+    - name: profiling
+      value: "false"
 dns: {}
 encryptionAlgorithm: RSA-2048
 etcd:
@@ -44,4 +47,7 @@ networking:
   podSubnet: 192.168.0.0/16
   serviceSubnet: 10.96.0.0/12
 proxy: {}
-scheduler: {}
+scheduler:
+  extraArgs:
+    - name: profiling
+      value: "false"
