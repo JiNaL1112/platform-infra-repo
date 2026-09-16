@@ -1,0 +1,71 @@
+server:
+  # Run Vault in HA mode with integrated Raft storage (no external Consul needed)
+  ha:
+    enabled: true
+    replicas: 3
+    raft:
+      enabled: true
+      setNodeId: true
+      config: |
+        ui = true
+
+        listener "tcp" {
+          address     = "[::]:8200"
+          cluster_address = "[::]:8201"
+          tls_disable = true
+        }
+
+        storage "raft" {
+          path = "/vault/data"
+        }
+
+        service_registration "kubernetes" {}
+
+  # Persistent storage for each Vault pod's raft data
+  dataStorage:
+    enabled: true
+    size: 5Gi
+    storageClass: null   # uses cluster default StorageClass
+    accessMode: ReadWriteOnce
+
+  # Resource requests/limits - modest, since you have a small 2-node cluster
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+
+  # Expose Vault outside the cluster (bare-metal friendly, no LoadBalancer needed)
+  service:
+    enabled: true
+    type: NodePort
+
+
+  # Soft (preferred) anti-affinity instead of the chart's default hard requirement.
+  # With only 2 nodes and 3 replicas, hard anti-affinity leaves pods unschedulable.
+  affinity: |
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: vault
+                app.kubernetes.io/instance: vault
+                component: server
+            topologyKey: kubernetes.io/hostname
+
+  # Disable TLS for now (matches your original tls_disable = true; enable later for real prod)
+  standalone:
+    enabled: false
+
+# Enable the Vault UI, exposed via the same service
+ui:
+  enabled: true
+  serviceType: NodePort
+
+# Injector is used for auto-injecting secrets into other pods; disable if you don't need it yet
+injector:
+  enabled: false
