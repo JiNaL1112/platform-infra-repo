@@ -1,1 +1,48 @@
-# # the serverTLSBootstrap change,
+# kubelet-config-patch.yaml
+#
+# Purpose: make kubelet request a real serving certificate (with correct
+# IP SANs) from the cluster CA, instead of using its self-signed default.
+#
+# Symptom this fixes:
+#   error: unable to upgrade connection: error dialing backend:
+#   tls: failed to verify certificate: x509: cannot validate certificate
+#   for <node-ip> because it doesn't contain any IP SANs
+#   (breaks kubectl exec / logs / port-forward against pods on that node)
+#
+# --- IMPORTANT: apply cluster-wide, not per-node ---
+# Hand-editing /var/lib/kubelet/config.yaml directly on a node works, but
+# kubeadm regenerates that file from the cluster's `kubelet-config`
+# ConfigMap (kube-system namespace) every time `kubeadm upgrade node` runs.
+# A per-node edit alone will silently be reverted on your next upgrade.
+#
+# --- How this was actually applied on this cluster ---
+#   kubectl edit configmap kubelet-config -n kube-system
+#   (added the line below inside the embedded `kubelet:` block)
+
+serverTLSBootstrap: true
+
+# --- Roll the change out to existing nodes ---
+# Run on EVERY node (control-plane and worker):
+#   sudo kubeadm upgrade node phase kubelet-config
+#   sudo systemctl restart kubelet
+#
+# --- After every kubelet restart or cert rotation ---
+# A new CSR will appear and needs approval before that node's kubelet
+# is reachable again:
+#   kubectl get csr
+#   kubectl certificate approve <csr-name>
+#
+# See manifests/kubelet-serving-cert-approver.yaml to automate this
+# approval step instead of doing it by hand each time.
+#
+# --- Snapshot the live config for reference (run periodically) ---
+#   kubectl get configmap kubelet-config -n kube-system -o yaml \
+#     > cluster-config/kubelet-config-live.yaml
+#
+# --- Rejected alternative: --kubelet-insecure-tls ---
+# Considered adding this flag to kube-apiserver instead. Rejected because
+# this cluster already sets --kubelet-certificate-authority in
+# cluster/kubeadm/kubeadm-clusterconfig.yaml, meaning kubelet cert
+# validation is intentionally enforced. Weakening that would be a step
+# backward in security posture, not a real fix — the cert itself needed
+# fixing, which is what serverTLSBootstrap does.

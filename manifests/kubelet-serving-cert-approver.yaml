@@ -1,1 +1,34 @@
- # pinned to a specific 
+# kubelet-serving-cert-approver.yaml
+#
+# Pinned to release: v0.12.0 (latest as of Sep 2026)
+# https://github.com/alex1989hu/kubelet-serving-cert-approver/releases/tag/v0.12.0
+#
+# Purpose: auto-approves kubernetes.io/kubelet-serving CSRs so you don't
+# have to run `kubectl certificate approve <name>` by hand every time a
+# kubelet's serving cert rotates (see cluster-config/kubelet-config-patch.yaml
+# for why these CSRs exist on this cluster in the first place).
+#
+# --- DO NOT reference `main` or `latest` in this file ---
+# An unpinned URL means the manifest content — RBAC rules, image tag,
+# resource limits — can silently change under you on a re-apply. Pin to
+# a tag and re-pin deliberately (via a PR / commit) when upgrading.
+#
+# --- How to fetch and vendor the actual manifest into this repo ---
+# Run this once to pull the exact v0.12.0 manifest and commit the result:
+#
+#   curl -fsSL -o manifests/kubelet-serving-cert-approver.yaml \
+#     https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/v0.12.0/deploy/standalone-install.yaml
+#
+# Then diff it against this placeholder, commit the real file, and delete
+# this comment block (or keep it above the fetched content as provenance).
+#
+# --- Apply ---
+#   kubectl apply -f manifests/kubelet-serving-cert-approver.yaml
+#
+# --- Verify ---
+#   kubectl get pods -n kubelet-serving-cert-approver-system   # namespace may vary by release — check the manifest
+#   kubectl get csr   # newly rotated certs should auto-approve within seconds
+#
+# --- Upgrading later ---
+# Re-run the curl command above with the new tag, review the diff
+# (RBAC/image/resource changes especially), then commit and re-apply.
