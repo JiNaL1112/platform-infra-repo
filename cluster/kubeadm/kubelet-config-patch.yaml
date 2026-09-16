@@ -1,48 +1,69 @@
-# kubelet-config-patch.yaml
+# Apply declaratively with:
+#   kubectl apply -f cluster-config/kubelet-config-patch.yaml
 #
-# Purpose: make kubelet request a real serving certificate (with correct
-# IP SANs) from the cluster CA, instead of using its self-signed default.
-#
-# Symptom this fixes:
-#   error: unable to upgrade connection: error dialing backend:
-#   tls: failed to verify certificate: x509: cannot validate certificate
-#   for <node-ip> because it doesn't contain any IP SANs
-#   (breaks kubectl exec / logs / port-forward against pods on that node)
-#
-# --- IMPORTANT: apply cluster-wide, not per-node ---
-# Hand-editing /var/lib/kubelet/config.yaml directly on a node works, but
-# kubeadm regenerates that file from the cluster's `kubelet-config`
-# ConfigMap (kube-system namespace) every time `kubeadm upgrade node` runs.
-# A per-node edit alone will silently be reverted on your next upgrade.
-#
-# --- How this was actually applied on this cluster ---
-#   kubectl edit configmap kubelet-config -n kube-system
-#   (added the line below inside the embedded `kubelet:` block)
-
-serverTLSBootstrap: true
-
-# --- Roll the change out to existing nodes ---
-# Run on EVERY node (control-plane and worker):
+# Then on EVERY node:
 #   sudo kubeadm upgrade node phase kubelet-config
 #   sudo systemctl restart kubelet
 #
-# --- After every kubelet restart or cert rotation ---
-# A new CSR will appear and needs approval before that node's kubelet
-# is reachable again:
+# Then approve any new CSRs:
 #   kubectl get csr
 #   kubectl certificate approve <csr-name>
 #
-# See manifests/kubelet-serving-cert-approver.yaml to automate this
-# approval step instead of doing it by hand each time.
-#
-# --- Snapshot the live config for reference (run periodically) ---
-#   kubectl get configmap kubelet-config -n kube-system -o yaml \
-#     > cluster-config/kubelet-config-live.yaml
-#
-# --- Rejected alternative: --kubelet-insecure-tls ---
-# Considered adding this flag to kube-apiserver instead. Rejected because
-# this cluster already sets --kubelet-certificate-authority in
-# cluster/kubeadm/kubeadm-clusterconfig.yaml, meaning kubelet cert
-# validation is intentionally enforced. Weakening that would be a step
-# backward in security posture, not a real fix — the cert itself needed
-# fixing, which is what serverTLSBootstrap does.
+# NOTE: metadata.resourceVersion/uid/creationTimestamp are deliberately
+# omitted below — kubectl apply doesn't need them, and including stale
+# values from an old export can cause a conflict error on apply.
+
+apiVersion: v1
+data:
+  kubelet: |
+    apiVersion: kubelet.config.k8s.io/v1beta1
+    authentication:
+      anonymous:
+        enabled: false
+      webhook:
+        cacheTTL: 0s
+        enabled: true
+      x509:
+        clientCAFile: /etc/kubernetes/pki/ca.crt
+    authorization:
+      mode: Webhook
+      webhook:
+        cacheAuthorizedTTL: 0s
+        cacheUnauthorizedTTL: 0s
+    cgroupDriver: systemd
+    clusterDNS:
+    - 10.96.0.10
+    clusterDomain: cluster.local
+    containerRuntimeEndpoint: ""
+    cpuManagerReconcilePeriod: 0s
+    crashLoopBackOff: {}
+    evictionPressureTransitionPeriod: 0s
+    fileCheckFrequency: 0s
+    healthzBindAddress: 127.0.0.1
+    healthzPort: 10248
+    httpCheckFrequency: 0s
+    imageMaximumGCAge: 0s
+    imageMinimumGCAge: 0s
+    kind: KubeletConfiguration
+    logging:
+      flushFrequency: 0
+      options:
+        json:
+          infoBufferSize: "0"
+        text:
+          infoBufferSize: "0"
+      verbosity: 0
+    memorySwap: {}
+    nodeStatusReportFrequency: 0s
+    nodeStatusUpdateFrequency: 0s
+    resolvConf: /run/systemd/resolve/resolv.conf
+    rotateCertificates: true
+    runtimeRequestTimeout: 0s
+    serverTLSBootstrap: true
+    shutdownGracePeriod: 0s
+    shutdownGracePeriodCriticalPods: 0s
+    staticPodPath: /etc/kubernetes/manifests
+    streamingConnectionIdleTimeout: 0s
+    syncFrequency: 0s
+    volumeStatsAggPeriod: 0s
+kind: ConfigMap
