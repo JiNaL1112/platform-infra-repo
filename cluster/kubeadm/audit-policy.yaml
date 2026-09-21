@@ -1,4 +1,13 @@
 apiVersion: audit.k8s.io/v1
 kind: Policy
 rules:
+  # Log full request/response for anything touching RBAC or secrets
+  - level: RequestResponse
+    resources:
+      - group: "rbac.authorization.k8s.io"
+      - group: ""
+        resources: ["secrets"]
+  # Log metadata only for everything else (who/what/when, no bodies)
   - level: Metadata
+    omitStages:
+      - RequestReceived   
