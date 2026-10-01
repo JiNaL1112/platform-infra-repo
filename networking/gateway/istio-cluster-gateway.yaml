@@ -53,3 +53,11 @@ spec:
     allowedRoutes:
       namespaces:
         from: All
+
+  - name: http-bookinfo
+    port: 80
+    protocol: HTTP
+    hostname: "bookinfo.local"
+    allowedRoutes:
+      namespaces:
+        from: bookinfo
