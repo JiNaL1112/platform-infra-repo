@@ -1,0 +1,35 @@
+pilot:
+  autoscaleEnabled: true
+  autoscaleMin: 2
+  autoscaleMax: 5
+  resources:
+    requests:
+      cpu: 500m
+      memory: 2Gi
+    limits:
+      memory: 4Gi
+
+meshConfig:
+  accessLogFile: /dev/stdout
+  enableTracing: false
+  defaultConfig:
+    holdApplicationUntilProxyStarts: true
+  outboundTrafficPolicy:
+    mode: REGISTRY_ONLY   # use ALLOW_ANY if you want open egress
+
+global:
+  logAsJson: true
+  proxy:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 512Mi
+
+# If you use a private/internal registry (common on-prem), uncomment:
+# global:
+#   hub: registry.mycompany.local/istio
+#   tag: 1.24.0
+#   imagePullSecrets:
+#     - my-registry-secret
