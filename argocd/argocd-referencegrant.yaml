@@ -7,10 +7,10 @@ spec:
   from:
   - group: gateway.networking.k8s.io
     kind: HTTPRoute
-    namespace: nginx-gateway
+    namespace: istio-ingress
   - group: gateway.networking.k8s.io
     kind: GRPCRoute
-    namespace: nginx-gateway
+    namespace: istio-ingress
   to:
   - group: ""
     kind: Service
