@@ -8,6 +8,9 @@ spec:
     - name: cluster-gateway
       namespace: nginx-gateway
       sectionName: http-sonarqube
+    - name: istio-cluster-gateway  
+      namespace: istio-ingress
+      sectionName: http-sonarqube
   hostnames:
     - "sonarqube.local"
   rules:
