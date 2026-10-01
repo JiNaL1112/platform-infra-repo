@@ -1,0 +1,55 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: istio-cluster-gateway
+  namespace: istio-ingress
+spec:
+  gatewayClassName: istio 
+  listeners:
+  - name: http
+    port: 80
+    protocol: HTTP
+    hostname: "argocd.local"
+    allowedRoutes:
+      namespaces:
+        from: All
+        
+  - name: http-fraud          
+    hostname: fraud-detection.local
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+
+  - name: http-grafana              
+    port: 80
+    protocol: HTTP
+    hostname: "grafana.local"
+    allowedRoutes:
+      namespaces:
+        from: All
+
+  - name: http-prometheus          
+    port: 80
+    protocol: HTTP
+    hostname: "prometheus.local"
+    allowedRoutes:
+      namespaces:
+        from: All
+
+  - name: http-sonarqube
+    port: 80
+    protocol: HTTP
+    hostname: "sonarqube.local"
+    allowedRoutes:
+      namespaces:
+        from: All
+
+  - name: http-bankapp
+    port: 80
+    protocol: HTTP
+    hostname: "bankapp.local"
+    allowedRoutes:
+      namespaces:
+        from: All
