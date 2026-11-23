@@ -60,4 +60,4 @@ spec:
     hostname: "bookinfo.local"
     allowedRoutes:
       namespaces:
-        from: bookinfo
+        from: All

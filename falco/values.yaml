@@ -1,0 +1,12 @@
+# values.yaml
+tty: true
+driver:
+  kind: modern_ebpf # alternatives: ebpf, kmod
+falco:
+  json_output: true
+  json_include_output_property: true
+# Optional: forward alerts to Slack, etc. via Falcosidekick
+falcosidekick:
+  enabled: true
+  webui:
+    enabled: true
